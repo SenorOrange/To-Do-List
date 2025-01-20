@@ -1,3 +1,0 @@
--math
--physics
--magplates

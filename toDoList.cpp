@@ -11,12 +11,14 @@ using namespace std;
 
 string Operation;
 string Task;
+string TaskState;
 string file;
 string fileData;
 string fileName;
 string line;
 vector<string> toDoList;
 
+bool w = false; //USED TO CHECK IF THE TASK EXISTS
 bool x = true; //USED TO KEEP THE PROGRAM RUNNING
 bool y = false; //USED TO CHECK IF A FILE IS ACTIVE
 bool z = false; //USED TO MAKE SURE YOU CAN ONLY SAVE ONCE A FILE HAS BEEN OPENED
@@ -39,9 +41,18 @@ void createNewList() {
     //CREATES A NEW FILE
     ofstream file(Task + ".txt");
     fileName = Task;
+
+    int s = Task.length();
     toDoList.push_back("Josh's " + Task + " List");
-    cout << "New List Created Called: " << Task << endl;
+
+    if (s > 0) {
+        cout << "Successfully Created: " << Task << endl;
+        s--;
+    } else {
+        cout << "Invalid Name Please Try Again" << endl;
+    }
     z = true;
+
 }
 
 //LOADS OLD LIST OF TASKS FROM FILE
@@ -61,11 +72,13 @@ void loadList() {
     while (std::getline(file, fileData)) 
         toDoList.push_back(fileData);
     
+    cout << endl;
+    for(auto i : toDoList)
+        cout << i << " " << endl;
+
     cout << "Successfully Loaded: " << Task << endl;
     z = true;
 
-    for(auto i : toDoList)
-        cout << i << " " << endl;
 }
 
 //SAVES CURRENT LIST TO FILE
@@ -77,8 +90,6 @@ void saveList() {
 
     ofstream file(Task + ".txt");
 
-    for(auto i : toDoList)
-        file << i << " " << endl;
     cout << "Successfully Saved: " << Task << endl;
 }
 
@@ -89,8 +100,9 @@ void newTasks() {
     cout << "Processing Task" << endl;
     std::this_thread::sleep_for(3s);
 
-
+    toDoList.push_back("☐  " + Task);
     cout << "Successfully Added To The List: " << Task << endl;
+
 }
 
 //DELETES A TASK THE USER DOSENT WANT ANYMORE
@@ -99,7 +111,18 @@ void deleteTask() {
     //LET USER KNOW THE TASK IS PROCESSING
     cout << "Processing Task" << endl;
     std::this_thread::sleep_for(3s);
-    cout << "Successfully Deleted From The List: " << Task << endl;
+
+    auto it = std::find_if(toDoList.begin(), toDoList.end(), [&](const string& item) {
+        return item.find(Task) != string::npos;
+    });
+
+    if (it != toDoList.end()) {
+        toDoList.erase(it);
+        cout << "Successfully Deleted From The List: " << Task << endl;
+    } else {
+        cout << "Item Not Found" << endl;
+    }
+
 }
 
 //CHECKS OR UNCHECKS A TASK WHETHER COMPLETED OR NOT
@@ -109,12 +132,29 @@ void taskState() {
     cout << "Processing Task" << endl;
     std::this_thread::sleep_for(3s);
 
+    auto it = std::find_if(toDoList.begin(), toDoList.end(), [&](const string& item) {
+        return item.find(Task) != string::npos;
+    });
 
+    if (it != toDoList.end()) {
+        cout << "What Is The Task State? (Completed or Not Done): ";
+        getline (cin, TaskState);
 
+        if (TaskState == "Completed"|| TaskState == "completed") {
+            toDoList.erase(it);
+            toDoList.push_back("☑  " + Task);
+            cout << "Successfully Altered Task To: " << TaskState << endl;
+        } else if (TaskState == "Not Done"|| TaskState == "not done") {
+            toDoList.erase(it);
+            toDoList.push_back("☐  " + Task);
+            cout << "Successfully Altered Task To: " << TaskState << endl;
+        } else {
+            cout << "Invalid State Please Try Again" << endl;
+        }
+    } else {
+        cout << "Item Not Found" << endl;
+    }
 
-    size_t pos = fileData.find(Task);
-
-    cout << "Successfully Altered Task To: " << pos << endl;
 }
 
 //TRIGGERS THE CODE
@@ -122,7 +162,7 @@ int main() {
     cout << "If you have a file you want to load please enter the name of the file, if not type 'NO': ";
     getline (cin, fileName);
 
-    if (fileName != "NO") {
+    if (fileName != "NO" || fileName != "no") {
         loadList();
     }
 
@@ -155,7 +195,11 @@ int main() {
         } else {
             cout << "Invalid Operation Please Try Again" << endl;
         }
-
+    
+    cout << endl;
+    for(auto i : toDoList)
+        cout << i << " " << endl;
+    cout << endl;
     std::this_thread::sleep_for(20ms);
 
     }
