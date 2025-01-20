@@ -45,12 +45,10 @@ void createNewList() {
     int s = Task.length();
     toDoList.push_back("Josh's " + Task + " List");
 
-    if (s > 0) {
-        cout << "Successfully Created: " << Task << endl;
-        s--;
-    } else {
-        cout << "Invalid Name Please Try Again" << endl;
+    for (s > 0; s--;) {
+        toDoList.push_back("-");
     }
+
     z = true;
 
 }
