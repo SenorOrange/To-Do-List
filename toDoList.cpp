@@ -16,6 +16,7 @@ string file;
 string fileData;
 string fileName;
 string line;
+string dashs;
 vector<string> toDoList;
 
 bool w = false; //USED TO CHECK IF THE TASK EXISTS
@@ -25,7 +26,7 @@ bool z = false; //USED TO MAKE SURE YOU CAN ONLY SAVE ONCE A FILE HAS BEEN OPENE
 
 //USER INPUT
 void getUserInput () {
-    cout << "What kind of operation do you want to do: ";
+    cout << "What kind of operation do you want to do (Type 'Help' For Help): ";
     getline (cin, Operation);
     cout << "State details of operation: ";
     getline (cin, Task);
@@ -33,21 +34,23 @@ void getUserInput () {
 
 //CREATES NEW LIST OF TASKS
 void createNewList() {
+    z = false;
 
     //LET USER KNOW THE TASK IS PROCESSING
     cout << "Processing Task" << endl;
-    std::this_thread::sleep_for(3s);
+    std::this_thread::sleep_for(1s);
+
+    //RESETS THE LIST
+    toDoList.clear();
 
     //CREATES A NEW FILE
-    ofstream file(Task + ".txt");
     fileName = Task;
+    ofstream file(fileName + ".txt");
 
     int s = Task.length();
-    toDoList.push_back("Josh's " + Task + " List");
-
-    for (s > 0; s--;) {
-        toDoList.push_back("-");
-    }
+    dashs = string(s, '-');
+    toDoList.push_back("Your " + Task + " List");
+    toDoList.push_back(dashs + "-----------");
 
     z = true;
 
@@ -58,7 +61,15 @@ void loadList() {
 
     //LET USER KNOW THE TASK IS PROCESSING
     cout << "Processing Task" << endl;
-    std::this_thread::sleep_for(3s);
+    std::this_thread::sleep_for(1s);
+
+    if (z == true) {
+        fileName = Task;
+        z = false;
+    } 
+
+    //RESETS THE LIST
+    toDoList.clear();
 
     ifstream file(fileName + ".txt");
 
@@ -70,11 +81,8 @@ void loadList() {
     while (std::getline(file, fileData)) 
         toDoList.push_back(fileData);
     
-    cout << endl;
-    for(auto i : toDoList)
-        cout << i << " " << endl;
-
     cout << "Successfully Loaded: " << Task << endl;
+
     z = true;
 
 }
@@ -84,9 +92,13 @@ void saveList() {
 
     //LET USER KNOW THE TASK IS PROCESSING
     cout << "Processing Task" << endl;
-    std::this_thread::sleep_for(3s);
+    std::this_thread::sleep_for(1s);
 
-    ofstream file(Task + ".txt");
+    ofstream file(fileName + ".txt");
+
+    for (auto i : toDoList) {
+        file << i << endl;
+    }
 
     cout << "Successfully Saved: " << Task << endl;
 }
@@ -96,9 +108,9 @@ void newTasks() {
 
     //LET USER KNOW THE TASK IS PROCESSING
     cout << "Processing Task" << endl;
-    std::this_thread::sleep_for(3s);
+    std::this_thread::sleep_for(1s);
 
-    toDoList.push_back("☐  " + Task);
+    toDoList.push_back("[ ]  " + Task);
     cout << "Successfully Added To The List: " << Task << endl;
 
 }
@@ -108,7 +120,7 @@ void deleteTask() {
 
     //LET USER KNOW THE TASK IS PROCESSING
     cout << "Processing Task" << endl;
-    std::this_thread::sleep_for(3s);
+    std::this_thread::sleep_for(1s);
 
     auto it = std::find_if(toDoList.begin(), toDoList.end(), [&](const string& item) {
         return item.find(Task) != string::npos;
@@ -128,7 +140,7 @@ void taskState() {
 
     //LET USER KNOW THE TASK IS PROCESSING
     cout << "Processing Task" << endl;
-    std::this_thread::sleep_for(3s);
+    std::this_thread::sleep_for(1s);
 
     auto it = std::find_if(toDoList.begin(), toDoList.end(), [&](const string& item) {
         return item.find(Task) != string::npos;
@@ -140,11 +152,11 @@ void taskState() {
 
         if (TaskState == "Completed"|| TaskState == "completed") {
             toDoList.erase(it);
-            toDoList.push_back("☑  " + Task);
+            toDoList.push_back("[X]  " + Task);
             cout << "Successfully Altered Task To: " << TaskState << endl;
         } else if (TaskState == "Not Done"|| TaskState == "not done") {
             toDoList.erase(it);
-            toDoList.push_back("☐  " + Task);
+            toDoList.push_back("[ ]  " + Task);
             cout << "Successfully Altered Task To: " << TaskState << endl;
         } else {
             cout << "Invalid State Please Try Again" << endl;
@@ -157,11 +169,18 @@ void taskState() {
 
 //TRIGGERS THE CODE
 int main() {
+    cout << "Welcome To Josh's To Do List Generator!" << endl << endl;
     cout << "If you have a file you want to load please enter the name of the file, if not type 'NO': ";
     getline (cin, fileName);
 
-    if (fileName != "NO" || fileName != "no") {
+    if (fileName == "NO" || fileName == "no") {
+
+    } else {
         loadList();
+        cout << endl;
+        for(auto i : toDoList)
+            cout << i << " " << endl;
+        cout << endl;
     }
 
     while (x = true) {
@@ -173,13 +192,14 @@ int main() {
             loadList();
         } else if (Operation == "Save List" && z == true|| Operation == "save list" && z == true) {
             saveList();
-        } else if (Operation == "New Task" || Operation == "new task") {
+        } else if (Operation == "New Task" && z == true|| Operation == "new task" && z == true) {
             newTasks();
-        } else if (Operation == "Delete Task" || Operation == "delete task") {
+        } else if (Operation == "Delete Task" && z == true|| Operation == "delete task" && z == true) {
             deleteTask();
-        } else if (Operation == "Task State" || Operation == "task state") {
+        } else if (Operation == "Task State" && z == true|| Operation == "task state" && z == true) {
             taskState();
         } else if (Operation == "Help" || Operation == "help") {
+            cout << endl;
             cout << "New List: Creates a new list of tasks" << endl;
             cout << "Load List: Loads an old list of tasks from a file" << endl;
             cout << "Save List: Saves the current list to a file" << endl;
@@ -198,6 +218,16 @@ int main() {
     for(auto i : toDoList)
         cout << i << " " << endl;
     cout << endl;
+
+    if (z == true) {
+        cout << "Auto Saved File" << endl;
+
+        ofstream file(fileName + ".txt");
+
+        for (auto i : toDoList) {
+            file << i << endl;
+        }
+    }
     std::this_thread::sleep_for(20ms);
 
     }
