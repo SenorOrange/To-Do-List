@@ -184,7 +184,7 @@ int main() {
         cout << endl;
     }
 
-    while (x = true) {
+    while (x) {
         getUserInput();
 
         if (Operation == "New List" || Operation == "new list") {
@@ -205,7 +205,7 @@ int main() {
             cout << "Delete Task: Deletes a task the user doesn't want anymore" << endl;
             cout << "Task State: Checks or unchecks a task whether completed or not" << endl;
         } else if (Operation == "Exit" || Operation == "exit") {
-            cout << "Exiting Program" << endl;
+            cout << "Exiting Program, see ya" << endl;
             x = false;
             break;
         } else {
