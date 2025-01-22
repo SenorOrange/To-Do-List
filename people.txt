@@ -1,3 +1,5 @@
 Josh's people List
 ------------------
 [X]  Brandon
+[ ]  Miguel
+[X]  Henry
