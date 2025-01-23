@@ -1,0 +1,7 @@
+Your Robotics (Thursday) List
+-----------------------------
+[ ]  Add Plastic Ring Guides
+[ ]  Make Lady Brown Functional
+[ ]  Adjust Lady Brown Macros
+[ ]  Driver Practice
+[ ]  Configure Odom / Test Odom
